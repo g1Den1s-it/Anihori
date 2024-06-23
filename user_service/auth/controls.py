@@ -1,6 +1,6 @@
-from flask import request, jsonify, Response
+from flask import jsonify, Response
 from flask import abort
-from auth.UserSercvice import UserService
+from auth.UserService import UserService
 
 
 class AuthController:
