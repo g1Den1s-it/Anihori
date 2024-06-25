@@ -18,3 +18,10 @@ class UserService:
         except Exception as e:
             db.session.rollback()
             abort(500, {"message": e})
+
+    def load_user(self, data) -> User | None:
+        try:
+            user = User.query.filter_by(email=data['email']).first()
+            return user
+        except:
+            return None
