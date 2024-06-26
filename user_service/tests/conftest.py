@@ -1,12 +1,11 @@
 import pytest
 from auth import create_app, db
-from auth.config import TestConfig
+from config import TestConfig
 
 
 @pytest.fixture()
 def app():
-    app = create_app()
-    app.config.from_object(TestConfig)
+    app = create_app(TestConfig)
 
     with app.app_context():
         db.create_all()
