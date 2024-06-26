@@ -1,6 +1,7 @@
 from auth.models import User
 from auth import db
 from flask import abort
+from sqlalchemy import update
 
 
 class UserService:
@@ -15,6 +16,21 @@ class UserService:
             db.session.commit()
 
             return user
+        except Exception as e:
+            db.session.rollback()
+            abort(500, {"message": e})
+
+    def update_data(self, user, **kwargs) -> None:
+        try:
+            valid_keys = {key for key in kwargs.keys() if hasattr(user, key)}
+
+            if valid_keys:
+                db.session.execute(
+                    update(User)
+                    .where(User.id == user.id)
+                    .values({key: kwargs[key] for key in valid_keys})
+                )
+                db.session.commit()
         except Exception as e:
             db.session.rollback()
             abort(500, {"message": e})

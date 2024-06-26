@@ -39,6 +39,16 @@ class AuthController:
         access_token = create_access_token(identity=identity)
         return jsonify({"access": access_token})
 
+    def profile(self, identity, user_data: dict = None) -> tuple[Response, int]:
+        user = self.user_service.load_user(identity)
+
+        if not user_data:
+            return jsonify(user.to_dict()), 200
+
+        self.user_service.update_data(user)
+
+        return jsonify(user.to_dict()), 200
+
     def verification_user_token(self, token: str) -> tuple[Response, int]:
         if not token:
             return jsonify({'message': "Token is missing"}), 401
