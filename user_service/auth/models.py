@@ -11,7 +11,7 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
 
     def hash_password(self, password: str) -> None:
-        self.password = custom_app_context.encrypt(password)
+        self.password = custom_app_context.hash(password)
 
     def verify_password(self, password: str) -> bool:
         return custom_app_context.verify(password, self.password)

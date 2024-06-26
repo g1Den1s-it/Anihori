@@ -11,8 +11,9 @@ def test_registration_user(client):
 
     response = client.post("/api/register/", json=test_data)
     test_data.pop("password")
+
     assert response.status_code == 200
-    for k, v in test_data:
+    for k, v in test_data.items():
         assert response.json[k] == v
 
 
