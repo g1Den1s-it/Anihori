@@ -12,8 +12,9 @@ class AuthController:
         self.user_service = UserService()
 
     def create_user(self, data) -> Response:
-        if not (data['username'] and data['email'] and data['password']):
-            abort(400, {"message": "required username, email and password"})
+        for required_key in ['username', 'email', 'password']:
+            if not data.get(required_key):
+                abort(400, {"message": f"required {required_key}"})
 
         if User.query.filter_by(email=data['email']).first():
             abort(400, {"message": "This Email already exist!"})
