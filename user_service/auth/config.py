@@ -7,3 +7,7 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(hours=8)
     JWT_SECRET_KEY = os.getenv("FLASK_JWT_SECRET_KEY")
+
+
+class TestConfig:
+    TESTING = True
