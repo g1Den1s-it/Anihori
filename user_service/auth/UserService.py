@@ -35,9 +35,15 @@ class UserService:
             db.session.rollback()
             abort(500, {"message": e})
 
-    def load_user(self, data) -> User | None:
+    def load_user(self, data: int | dict) -> User | None:
         try:
-            user = User.query.filter_by(email=data['email']).first()
+            if isinstance(data, int):
+                user = User.query.filter_by(id=data).first()
+                return user
+
+            query_data = {key: data[key] for key in data.keys() if hasattr(User, key)}
+            query_data.pop('password')
+            user = User.query.filter_by(**query_data).first()
             return user
         except:
             return None

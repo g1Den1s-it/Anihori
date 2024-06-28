@@ -27,8 +27,8 @@ class AuthController:
         user = self.user_service.load_user(user_data)
 
         if user and user.verify_password(user_data['password']):
-            access_token = create_access_token(identity=user.to_dict())
-            refresh_token = create_refresh_token(identity=user.to_dict())
+            access_token = create_access_token(identity=user.id)
+            refresh_token = create_refresh_token(identity=user.id)
 
             return jsonify({
                 "access": access_token,
@@ -46,7 +46,7 @@ class AuthController:
         if not user_data:
             return jsonify(user.to_dict()), 200
 
-        self.user_service.update_data(user)
+        self.user_service.update_data(user, **user_data)
 
         return jsonify(user.to_dict()), 200
 
