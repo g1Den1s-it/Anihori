@@ -8,10 +8,11 @@ login_manager = LoginManager()
 jwt = JWTManager()
 
 
-def create_app(config):
+def create_app(config=None):
     app = Flask(__name__)
 
-    app.config.from_prefixed_env()
+    if not config:
+        app.config.from_prefixed_env()
     app.config.from_object(config)
 
     db.init_app(app)
