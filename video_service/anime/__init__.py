@@ -14,6 +14,8 @@ def create_app(config=None):
 
     db.init_app(app)
 
+    from anime.routers import anime
+    app.register_blueprint(anime)
 
     with app.app_context():
         db.create_all()

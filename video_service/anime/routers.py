@@ -1,13 +1,13 @@
 from flask.blueprints import Blueprint
 
-media = Blueprint('anime', __name__)
+anime = Blueprint('anime', __name__)
 
 
-@media.post('/list/')
+@anime.post('/list/')
 def get_list():
     pass
 
 
-@media.post('/create/')
+@anime.post('/create/')
 def add_to_favorite():
     pass
