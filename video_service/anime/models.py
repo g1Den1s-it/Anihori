@@ -47,3 +47,13 @@ class Anime(db.Model):
     author = relationship('Author', secondary=anime_authors)
     create_at = db.Column(db.Date)
     genres = relationship('Genre', secondary=anime_genres)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "author": self.author,
+            "create_at": self.create_at,
+            "genres": self.genres
+        }
