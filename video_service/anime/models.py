@@ -21,12 +21,24 @@ class Genre(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     name = db.Column(db.String(28), nullable=False)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
 
 class Author(db.Model):
     __tablename__ = 'authors'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     name = db.Column(db.String(28), nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
 
 
 class Series(db.Model):
@@ -35,7 +47,16 @@ class Series(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     name = db.Column(db.String(44), nullable=False)
     video = db.Column(db.String(164), nullable=False)
+    position = db.Column(db.Integer, nullable=False)
     anime = db.Column(db.Integer, db.ForeignKey('anime.id'), nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "video": self.video,
+            "position": self.position,
+        }
 
 
 class Anime(db.Model):
@@ -44,7 +65,7 @@ class Anime(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    author = relationship('Author', secondary=anime_authors)
+    authors = relationship('Author', secondary=anime_authors)
     create_at = db.Column(db.Date)
     genres = relationship('Genre', secondary=anime_genres)
 
@@ -53,7 +74,11 @@ class Anime(db.Model):
             "id": self.id,
             "title": self.title,
             "description": self.description,
-            "author": self.author,
+            "author": [
+                author.to_dict() for author in self.authors
+            ],
             "create_at": self.create_at,
-            "genres": self.genres
+            "genres": [
+                genre.to_dict() for genre in self.genres
+            ]
         }

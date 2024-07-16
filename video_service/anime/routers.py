@@ -4,7 +4,7 @@ from anime.controlls import AnimeController
 
 anime = Blueprint('anime', __name__)
 
-anime_controller = AnimeControll()
+anime_controller = AnimeController()
 
 
 @anime.get('/list/')
@@ -30,4 +30,5 @@ def add_to_favorite():
 
 @anime.post('/create/')
 def create_anime():
-    return anime_controller.
+    data = request.get_json()
+    return anime_controller.create_anime(data)
