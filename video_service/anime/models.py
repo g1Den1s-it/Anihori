@@ -1,7 +1,6 @@
 from anime import db
 from sqlalchemy.orm import relationship
 
-
 anime_authors = db.Table(
     'anime_authors',
     db.Column('anime_id', db.Integer, db.ForeignKey('anime.id'), primary_key=True),
@@ -30,7 +29,7 @@ class Genre(db.Model):
 
 class Author(db.Model):
     __tablename__ = 'authors'
-
+    # fix in the future and unique to name
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True)
     name = db.Column(db.String(28), nullable=False)
 

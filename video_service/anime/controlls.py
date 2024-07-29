@@ -56,6 +56,19 @@ class AnimeController:
             return jsonify({"message": str(e)}), 400
 
 
+    def get_anime_by_filters(self, **kwargs) -> tuple[Response, int]:
+        try:
+            anime = self.anime_service.anime_filter(**kwargs)
+
+            if isinstance(anime, Exception):
+                raise anime
+
+            return jsonify([ani.to_dict() for ani in anime]), 200
+
+        except Exception as e:
+            return jsonify({"message": str(e)}), 400
+
+
     def create_seria_to_anime(self, instance: dict, file: bytes) -> tuple[Response, int]:
         if not instance:
             return jsonify({"message": "No data provided!"}), 400

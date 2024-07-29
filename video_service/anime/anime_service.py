@@ -47,6 +47,37 @@ class AnimeService:
             db.session.rollback()
             return e
 
+    def anime_filter(self, **kwargs) -> list[Anime] | Exception:
+        try:
+            author_name = kwargs.get("author")
+            genre_name = kwargs.get("genres")
+            anime_filters = {
+                "title": kwargs.get("title"),
+                "create_at": kwargs.get("date")
+            }
+            query = Anime.query
+
+            if author_name:
+                author = Author.query.filter_by(name=author_name).first()
+                if author:
+                    query = query.filter(Anime.authors.contains(author))
+
+            if genre_name:
+                genres = Genre.query.filter_by(name=genre_name).first()
+                if genres:
+                    query = query.filter(Anime.genres.contains(genres))
+
+            for key, value in anime_filters.items():
+                if value:
+                    query = query.filter(getattr(Anime, key) == value)
+
+            anime = query.all()
+
+            return anime
+
+        except Exception as e:
+            return e
+
     def post_create_anime(self, instance: dict) -> Anime | Exception:
         try:
             genre_list = []

@@ -12,10 +12,10 @@ def get_list():
     return anime_controller.get_all_anime()
 
 
-@anime.get('/f')
+@anime.get('/list/f')
 def filter_list():
     filter_args = request.args.to_dict()
-    return
+    return anime_controller.get_anime_by_filters(**filter_args)
 
 
 @anime.get('/list/<int:id>/')
