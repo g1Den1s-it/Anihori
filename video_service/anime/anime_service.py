@@ -108,32 +108,37 @@ class AnimeService:
 
     def get_or_create_author(self, name) -> Author:
         try:
-            author = Author.query.get(name=name)
-
-            return author
-        except:
-            db.session.rollback()
+            author = Author.query.filter_by(name=name).first()
+            if author:
+                return author
 
             author = Author(name=name)
 
             db.session.add(author)
             db.session.commit()
 
+        except:
+            db.session.rollback()
+
+            author = Author.query.filter_by(name=name).first()
             return author
 
     def get_or_create_genre(self, name) -> Genre:
         try:
-            genre = Genre.query.get(name=name)
+            genre = Genre.query.filter_by(name=name).first()
 
-            return genre
-        except:
-            db.session.rollback()
+            if genre:
+                return genre
 
             genre = Genre(name=name)
 
             db.session.add(genre)
             db.session.commit()
 
+        except:
+            db.session.rollback()
+
+            genre = Genre.query.filter_by(name=name).first()
             return genre
 
 
