@@ -25,6 +25,10 @@ services:
       - video_service/.env
     ports:
       - "5001:5001"
+    develop:
+      watch:
+        - action: rebuild
+          path: .
   db:
     image: postgres:latest
     volumes:
