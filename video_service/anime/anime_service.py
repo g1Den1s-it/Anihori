@@ -117,6 +117,7 @@ class AnimeService:
             db.session.add(author)
             db.session.commit()
 
+            return author
         except:
             db.session.rollback()
 
@@ -135,6 +136,7 @@ class AnimeService:
             db.session.add(genre)
             db.session.commit()
 
+            return genre
         except:
             db.session.rollback()
 
