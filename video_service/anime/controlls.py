@@ -1,9 +1,9 @@
 import os
-
+import requests
+import jwt
 from anime.anime_service import AnimeService
 from anime.schemas import AnimeSchema, SeriesSchema
 from flask import Response, jsonify
-from marshmallow import ValidationError
 from config import Config
 from werkzeug.utils import secure_filename
 
@@ -54,6 +54,30 @@ class AnimeController:
 
         except Exception as e:
             return jsonify({"message": str(e)}), 400
+
+
+    def post_to_favorite(self, uid: int, auth_token: str) -> tuple[Response, int]:
+        try:
+            if uid:
+                return jsonify({"message": "not found anime"}), 400
+
+            is_auth = requests.get('http://media/api/login-verification/',
+                                   headers={"Authorization": f"Bearer {auth_token}"})
+
+            if is_auth.status_code != 200:
+                return jsonify({"message": "user is not authorized"}), 401
+            else:
+                decode = jwt.decode(auth_token, options={"verify_signature": False})
+                user_anime = self.anime_service.post_favorite(decode['sub'], uid)
+
+                if isinstance(user_anime, Exception):
+                    raise user_anime
+
+                return jsonify({"message": "success"}), 200
+
+        except Exception as e:
+            return jsonify({"message": str(e)}), 500
+
 
 
     def get_anime_by_filters(self, **kwargs) -> tuple[Response, int]:

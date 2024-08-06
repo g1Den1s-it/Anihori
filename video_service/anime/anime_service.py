@@ -1,5 +1,7 @@
 from anime import db
 from anime.models import Anime, Author, Genre, Series
+from anime.models import user_anime
+from sqlalchemy import Table
 
 
 class AnimeService:
@@ -158,5 +160,20 @@ class AnimeService:
             return series
 
         except Exception as e:
+            db.session.rollback()
+            return e
+
+
+    def post_favorite(self, user_id: int, anime_id: int) -> Table | Exception:
+        try:
+            favorite = user_anime.insert().values(user_id=user_id, anime_id=anime_id)
+
+            db.session.execute(favorite)
+            db.session.commit()
+
+            return favorite
+
+        except Exception as e:
+
             db.session.rollback()
             return e

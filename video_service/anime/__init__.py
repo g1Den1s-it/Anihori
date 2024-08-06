@@ -18,6 +18,7 @@ def create_app(config=None):
     app.register_blueprint(anime)
 
     with app.app_context():
+        db.reflect()
         db.create_all()
 
     return app

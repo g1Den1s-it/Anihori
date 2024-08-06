@@ -13,6 +13,12 @@ anime_genres = db.Table(
     db.Column('genre_id', db.Integer, db.ForeignKey('genres.id'), primary_key=True)
 )
 
+user_anime = db.Table(
+    'user_anime',
+    db.Column('anime_id', db.Integer, db.ForeignKey('anime.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
+
 
 class Genre(db.Model):
     __tablename__ = 'genres'
