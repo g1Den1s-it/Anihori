@@ -1,7 +1,7 @@
 from anime import db
 from anime.models import Anime, Author, Genre, Series
 from anime.models import user_anime
-from sqlalchemy import Table
+from sqlalchemy import Table, select
 
 
 class AnimeService:
@@ -177,3 +177,19 @@ class AnimeService:
 
             db.session.rollback()
             return e
+
+
+    def get_list_favorite(self, user_id: int) -> list[Anime] | Exception:
+        try:
+            anime_ids = db.session.query(user_anime.c.anime_id).filter_by(user_id=user_id).all()
+
+            anime_ids = [anime_id for (anime_id,) in anime_ids]
+
+            anime_list = Anime.query.filter(Anime.id.in_(anime_ids)).all()
+
+            return anime_list
+
+        except Exception as e:
+            db.session.rollback()
+            return e
+

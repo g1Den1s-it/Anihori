@@ -35,7 +35,6 @@ class AnimeController:
         except Exception as e:
             return jsonify(str(e)), 500
 
-
     def create_anime(self, data: dict) -> tuple[Response, int]:
         if not data:
             return jsonify({"message": "No data provided"}), 400
@@ -55,21 +54,15 @@ class AnimeController:
         except Exception as e:
             return jsonify({"message": str(e)}), 400
 
-
     def post_to_favorite(self, uid: int, auth_token: str) -> tuple[Response, int]:
         try:
             if not uid:
                 return jsonify({"message": "not found anime"}), 400
 
-            is_auth = requests.get('http://auth:5000/api/login-verification/',
-                                   headers={"Authorization": auth_token})
-
-            token = auth_token.split(" ")[1]
-
-            if is_auth.status_code != 200:
+            if self.check_authorization(auth_token) != 200:
                 return jsonify({"message": "user is not authorized"}), 401
             else:
-                decode = jwt.decode(token, options={"verify_signature": False})
+                decode = jwt.decode(auth_token.split(" ")[1], options={"verify_signature": False})
                 user_anime = self.anime_service.post_favorite(decode['sub'], uid)
 
                 if isinstance(user_anime, Exception):
@@ -80,7 +73,21 @@ class AnimeController:
         except Exception as e:
             return jsonify({"message": str(e)}), 500
 
+    def get_favorite_list(self, auth_token: str) -> tuple[Response, int]:
+        try:
+            if self.check_authorization(auth_token) != 200:
+                return jsonify({"message": "user is not authorized"}), 401
+            else:
+                decode = jwt.decode(auth_token.split(" ")[1], options={"verify_signature": False})
+                favorite_list = self.anime_service.get_list_favorite(decode['sub'])
 
+                if isinstance(favorite_list, Exception):
+                    raise favorite_list
+
+                return jsonify([anime.to_dict() for anime in favorite_list]), 200
+
+        except Exception as e:
+            return jsonify({"message": str(e)}), 500
 
     def get_anime_by_filters(self, **kwargs) -> tuple[Response, int]:
         try:
@@ -93,7 +100,6 @@ class AnimeController:
 
         except Exception as e:
             return jsonify({"message": str(e)}), 400
-
 
     def create_seria_to_anime(self, instance: dict, file: bytes) -> tuple[Response, int]:
         if not instance:
@@ -120,3 +126,12 @@ class AnimeController:
     @staticmethod
     def allowed_file(file) -> bool:
         return '.' in file and file.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
+
+    @staticmethod
+    def check_authorization(full_token: str) -> int:
+        jwt_token = full_token.split(" ")[1]
+
+        res = requests.get('http://auth:5000/api/login-verification/',
+                           headers={"Authorization": full_token})
+
+        return res.status_code

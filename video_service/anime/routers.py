@@ -29,6 +29,12 @@ def add_to_favorite(id):
     return anime_controller.post_to_favorite(id, token)
 
 
+@anime.get('/favorite-list/')
+def get_all_favorites():
+    token = request.headers["Authorization"]
+    return anime_controller.get_favorite_list(token)
+
+
 @anime.post('/create/')
 def create_anime():
     data = request.get_json()
