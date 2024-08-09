@@ -26,7 +26,7 @@ def get_detail(id):
 @anime.post('/list/<int:id>/favorite/')
 def add_to_favorite(id):
     token = request.headers["Authorization"]
-    return anime_controller.post_to_favorite(token, id)
+    return anime_controller.post_to_favorite(id, token)
 
 
 @anime.post('/create/')

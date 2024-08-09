@@ -58,16 +58,18 @@ class AnimeController:
 
     def post_to_favorite(self, uid: int, auth_token: str) -> tuple[Response, int]:
         try:
-            if uid:
+            if not uid:
                 return jsonify({"message": "not found anime"}), 400
 
-            is_auth = requests.get('http://media/api/login-verification/',
-                                   headers={"Authorization": f"Bearer {auth_token}"})
+            is_auth = requests.get('http://auth:5000/api/login-verification/',
+                                   headers={"Authorization": auth_token})
+
+            token = auth_token.split(" ")[1]
 
             if is_auth.status_code != 200:
                 return jsonify({"message": "user is not authorized"}), 401
             else:
-                decode = jwt.decode(auth_token, options={"verify_signature": False})
+                decode = jwt.decode(token, options={"verify_signature": False})
                 user_anime = self.anime_service.post_favorite(decode['sub'], uid)
 
                 if isinstance(user_anime, Exception):
