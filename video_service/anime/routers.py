@@ -35,6 +35,12 @@ def get_all_favorites():
     return anime_controller.get_favorite_list(token)
 
 
+@anime.delete('/list/<int:id>/favorite/delete/')
+def remove_from_favorite(id):
+    token = request.headers["Authorization"]
+    return anime_controller.remove_favorite(id, token)
+
+
 @anime.post('/create/')
 def create_anime():
     data = request.get_json()

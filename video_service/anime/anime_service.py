@@ -193,3 +193,30 @@ class AnimeService:
             db.session.rollback()
             return e
 
+    def remove_anime_from_favorite(self, user_id: int, anime_id: int) -> bool | Exception:
+        try:
+            db.session.execute(
+                user_anime.delete().where(
+                    (user_anime.c.user_id == user_id) &
+                    (user_anime.c.anime_id == anime_id)
+                )
+            )
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            return e
+
+    def is_favorite_anime(self, user_id: int, anime_id: int) -> bool:
+        try:
+            exists = db.session.query(
+                db.exists().where(
+                    (user_anime.c.user_id == user_id) &
+                    (user_anime.c.anime_id == anime_id)
+                )
+            ).scalar()
+
+            return exists
+        except Exception as e:
+            db.session.rollback()
+            return False

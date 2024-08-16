@@ -89,6 +89,30 @@ class AnimeController:
         except Exception as e:
             return jsonify({"message": str(e)}), 500
 
+    def remove_favorite(self, uid: int, auth_token: str) -> tuple[Response, int]:
+        try:
+            if not uid:
+                return jsonify({"message": "not found anime"}), 400
+
+            if self.check_authorization(auth_token) != 200:
+                return jsonify({"message": "user is not authorized"}), 401
+            else:
+                decode = jwt.decode(auth_token.split(" ")[1], options={"verify_signature": False})
+
+                if not self.anime_service.is_favorite_anime(decode['sub'], uid):
+                    return jsonify({"message": f"User {decode['sub']} does not have anime {uid} in their favorites."}), 400
+
+                is_remove = self.anime_service.remove_anime_from_favorite(decode['sub'], uid)
+
+                if isinstance(is_remove, Exception):
+                    raise is_remove
+
+                return jsonify({"message": "removed"}), 200
+
+        except Exception as e:
+
+            return jsonify({"message": str(e)}), 500
+
     def get_anime_by_filters(self, **kwargs) -> tuple[Response, int]:
         try:
             anime = self.anime_service.anime_filter(**kwargs)
@@ -129,8 +153,6 @@ class AnimeController:
 
     @staticmethod
     def check_authorization(full_token: str) -> int:
-        jwt_token = full_token.split(" ")[1]
-
         res = requests.get('http://auth:5000/api/login-verification/',
                            headers={"Authorization": full_token})
 
