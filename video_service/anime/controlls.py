@@ -63,6 +63,10 @@ class AnimeController:
                 return jsonify({"message": "user is not authorized"}), 401
             else:
                 decode = jwt.decode(auth_token.split(" ")[1], options={"verify_signature": False})
+
+                if self.anime_service.is_favorite_anime(decode['sub'], uid):
+                    return jsonify({"message": "Anime already added to favorites"}), 200
+
                 user_anime = self.anime_service.post_favorite(decode['sub'], uid)
 
                 if isinstance(user_anime, Exception):
