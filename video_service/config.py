@@ -6,4 +6,4 @@ class Config:
     SECRET_KEY = os.getenv("FLASK_SECRET_KEY")
     DEBUG = os.getenv("FLASK_DEBUG")
     ALLOWED_EXTENSIONS = ['mp4']
-    UPLOAD_FOLDER = '/static'
+    UPLOAD_FOLDER = 'static'

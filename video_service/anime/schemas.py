@@ -11,6 +11,5 @@ class AnimeSchema(Schema):
 
 class SeriesSchema(Schema):
     name = fields.String(required=True, validate=validate.Length(min=4, max=44))
-    video = fields.String(required=True)
     anime = fields.Integer(required=True)
-
+    position = fields.Integer(required=True)

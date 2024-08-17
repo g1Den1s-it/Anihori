@@ -5,6 +5,7 @@ from anime.anime_service import AnimeService
 from anime.schemas import AnimeSchema, SeriesSchema
 from flask import Response, jsonify
 from config import Config
+from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 
@@ -129,7 +130,7 @@ class AnimeController:
         except Exception as e:
             return jsonify({"message": str(e)}), 400
 
-    def create_seria_to_anime(self, instance: dict, file: bytes) -> tuple[Response, int]:
+    def create_seria_to_anime(self, instance: dict, file: FileStorage) -> tuple[Response, int]:
         if not instance:
             return jsonify({"message": "No data provided!"}), 400
 
@@ -141,13 +142,26 @@ class AnimeController:
 
             valid_data = series_schema.load(instance)
 
-            if file and self.allowed_file(file):
-                filename = secure_filename(file.filename)
-                os.makedirs(os.path.join(Config.UPLOAD_FOLDER, 'video'), exist_ok=True)
+            filename = secure_filename(file.filename.lower())
 
-                file.save(Config.UPLOAD_FOLDER, filename)
+            if file and self.allowed_file(filename):
 
-            series = self.anime_service.create_seria(valid_data)
+                media_folder = os.path.join(Config.UPLOAD_FOLDER, 'media')
+
+                if not os.path.isdir(media_folder):
+                    os.mkdir(media_folder)
+
+                file_path = os.path.join(media_folder, filename)
+
+                file.save(file_path)
+                series = self.anime_service.create_seria(valid_data, file_path)
+
+                if isinstance(series, Exception):
+                    raise series
+
+                return jsonify(series.to_dict()), 200
+            else:
+                return jsonify({"message": f"unsupported type of file {file.filename}"}), 400
         except Exception as e:
             return jsonify({"message": e}), 400
 

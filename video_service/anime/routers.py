@@ -45,3 +45,10 @@ def remove_from_favorite(id):
 def create_anime():
     data = request.get_json()
     return anime_controller.create_anime(data)
+
+
+@anime.post('/series/create/')
+def create_series():
+    file = request.files.get('video')
+    json_data = request.form
+    return anime_controller.create_seria_to_anime(json_data, file)

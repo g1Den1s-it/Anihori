@@ -107,7 +107,6 @@ class AnimeService:
             db.session.rollback()
             return e
 
-
     def get_or_create_author(self, name) -> Author:
         try:
             author = Author.query.filter_by(name=name).first()
@@ -145,13 +144,13 @@ class AnimeService:
             genre = Genre.query.filter_by(name=name).first()
             return genre
 
-
-    def create_seria(self, instance: dict) -> Series | Exception:
+    def create_seria(self, instance: dict, file_path: str) -> Series | Exception:
         try:
             series = Series(
                 name=instance['name'],
-                video=instance['video'],
-                anime=instance['anime']
+                video=file_path,
+                anime=instance['anime'],
+                position=instance['position']
             )
 
             db.session.add(series)
@@ -162,7 +161,6 @@ class AnimeService:
         except Exception as e:
             db.session.rollback()
             return e
-
 
     def post_favorite(self, user_id: int, anime_id: int) -> Table | Exception:
         try:
@@ -177,7 +175,6 @@ class AnimeService:
 
             db.session.rollback()
             return e
-
 
     def get_list_favorite(self, user_id: int) -> list[Anime] | Exception:
         try:
