@@ -23,6 +23,9 @@ class AnimeController:
             anime = self.anime_service.get_anime(anime_id)
             series = self.anime_service.get_series(anime_id)
 
+            if anime is None:
+                return jsonify({"message": "Anime does not exist."}), 404
+
             if isinstance(anime, Exception):
                 raise anime
             if isinstance(series, Exception):
