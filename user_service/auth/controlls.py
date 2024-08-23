@@ -1,6 +1,6 @@
 import os
 import jwt
-from flask import jsonify, Response
+from flask import jsonify, Response, current_app
 from flask import abort
 from auth.UserService import UserService
 from auth.models import User
@@ -71,7 +71,7 @@ class AuthController:
         try:
             payload = jwt.decode(
                 jwt_token,
-                os.getenv("FLASK_JWT_SECRET_KEY"),
+                current_app.config["JWT_SECRET_KEY"],
                 "HS256"
             )
             return payload
