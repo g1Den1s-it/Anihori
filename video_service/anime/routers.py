@@ -1,8 +1,10 @@
-from flask import request
+import os
+
+from flask import request, send_from_directory, url_for
 from flask.blueprints import Blueprint
 from anime.controlls import AnimeController
 
-anime = Blueprint('anime', __name__)
+anime = Blueprint('anime', __name__, static_folder=os.path.join('..', 'static'))
 
 anime_controller = AnimeController()
 
@@ -52,3 +54,9 @@ def create_series():
     file = request.files.get('video')
     json_data = request.form
     return anime_controller.create_seria_to_anime(json_data, file)
+
+
+@anime.route('/', defaults={'path': ''})
+@anime.route('/<path:path>')
+def custom_static(path):
+    return send_from_directory(anime.static_folder, path)
