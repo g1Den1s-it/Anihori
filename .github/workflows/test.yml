@@ -1,0 +1,34 @@
+name: Testing code
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r user_service/requirements.txt
+          pip install -r video_service/requirements.txt
+
+      - name: Run tests
+        env:
+          SECRET_KEY: ${{secrets.FLASK_SECRET_KEY}}
+          JWT_SECRET_KEY: ${{secrets.FLASK_JWT_SECRET_KEY}}
+        run: |
+          cd user_service
+          pytest --cache-clear
+          cd ../video_service
+          pytest

@@ -13,7 +13,24 @@ services:
       - "5000:5000"
     env_file:
       - user_service/.env
-
+  media:
+    build:
+      context: video_service
+      dockerfile: Dockerfile
+    depends_on:
+      - auth
+      - db
+    command: /media/run_service.sh
+    volumes:
+      - static_data:/media/static/
+    env_file:
+      - video_service/.env
+    ports:
+      - "5001:5001"
+    develop:
+      watch:
+        - action: rebuild
+          path: .
   db:
     image: postgres:latest
     volumes:
@@ -24,3 +41,4 @@ services:
       - POSTGRES_DB=anihori_db
 volumes:
     postgres_data:
+    static_data:
